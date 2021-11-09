@@ -1,13 +1,28 @@
 .chooseHome {
   display: flex;
+  z-index: 3;
   flex-direction: row;
 }
 
 .page {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.persons {
+  max-height: 300px;
+  z-index: 2;
+  overflow: scroll;
+  transition: 400ms all ease-in-out;
+  margin-top: 8%;
+  display: flex;
+  width: 80%;
+  flex-wrap: wrap;
+  margin-left: auto;
+  margin-right: auto;
+  flex-direction: row;
 }

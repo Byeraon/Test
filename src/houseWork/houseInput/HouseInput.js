@@ -1,17 +1,35 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import style from './houseInput.module.css';
 
-export const HouseInput = () => {
+export const HouseInput = ({ name, change, array }) => {
+  const [inputValue, setValue] = useState('')
+  const { street, house } = useSelector((state) => state.housesReducer);
+  useEffect(() => {
+    if (name === 'flats') {
+      setValue('')
+    }
+  }, [street, house])
+  useEffect(() => {
+    if (name === 'homes') {
+      setValue('')
+    }
+  }, [street])
   return (
-    <div>
+    <div style={array.length > 0 ? {} : { width: '0px', margin: 0 }} className={style.inputPlace}>
       <input
-        onChange={(event) => checkTrueStreet(event.target.value)}
-        list="streets"
+        style={array.length > 0 ? {} : { width: '0px', padding: 0, opacity: 0, borderWidth: 0 }}
+        value={inputValue}
+        onChange={(event) => { setValue(event.target.value) }}
+        list={name}
+        placeholder={name === 'streets' ? 'Улица' : name === 'homes' ? 'Дом' : 'Кв./Офис'}
       ></input>
-      <datalist id="streets">
-        {streets.map((el) => (
-          <option value={el.name}></option>
+      <div className={style.listOptions} id={name}>
+        {array.filter(el => el.name.toUpperCase().indexOf(inputValue.toUpperCase()) === -1 ? false : true).map((el) => (
+          <button onClick={(event) => { change(el.name, array, name); setValue(el.name) }}>{el.name}</button>
         ))}
-      </datalist>
+      </div>
     </div>
   );
 };
+//onClick={(event) => {change(event.target.value, array, name)}}

@@ -1,0 +1,7 @@
+.App {
+    background-image: url(./images/city.jpg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: rgb(1, 9, 18);
+}

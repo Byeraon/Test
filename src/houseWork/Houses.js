@@ -2,57 +2,85 @@ import React, { useEffect, useState, useLayoutEffect } from "react";
 import style from "./houses.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setStreet } from "../redux/actions";
+import { HouseInput } from "./houseInput/HouseInput";
+import { clearUsers, fetchUsers, setFlat, setHouse, setStreet } from "../redux/actions";
+import { UserCard } from "./userCard/UserCard";
+import { RemoveUser } from "./modals/RemoveUser";
 
 export const Houses = () => {
   const dispatch = useDispatch();
-  const { street } = useSelector((state) => state.housesReducer);
+  const { street, house, flat } = useSelector((state) => state.housesReducer);
+  const { users, modals } = useSelector((state) => state.usersReducer);
   const [streets, setStreets] = useState([]);
-  const [homes, setHomes] = useState(undefined);
-  const [flats, setFlats] = useState(undefined);
+  const [flats, setFlats] = useState([])
+  const [homes, setHomes] = useState([])
 
-  const [currentHome, setCurrentHome] = useState(undefined);
-  const [currentFlat, setCurrentFlat] = useState(undefined);
 
-  const checkTrueStreet = (value) => {
-    if (streets.map((el) => el.name).indexOf(value) !== -1) {
-      console.log(street);
-      console.log(streets.find((street) => street.name === value));
-      dispatch(setStreet(streets.find((street) => street.name === value)));
-      console.log(street);
+  const checkTrueValue = (value, array, type) => {
+    switch (type) {
+      case 'streets': {
+        if (array.map((el) => el.name).indexOf(value) !== -1) {
+          console.log(street);
+          console.log(array.find((street) => street.name === value));
+          dispatch(setStreet(array.find((street) => street.name === value)));
+          console.log(street);
+        }
+        break;
+      }
+      case 'homes': {
+        if (array.map((el) => el.name).indexOf(value) !== -1) {
+          console.log(array.find((home) => home.name === value), 'truehome');
+          dispatch(setHouse(array.find((home) => home.name === value)))
+          console.log(house)
+        }
+        break;
+      }
+      case 'flats': {
+        if (array.map((el) => el.name).indexOf(value) !== -1) {
+          console.log(value);
+
+          dispatch(setFlat(array.find((flat) => flat.name === value)))
+
+        }
+        break;
+      }
+      default: return 0
     }
+
   };
 
-  const checkTrueHome = (value) => {
-    if (homes.map((el) => el.name).indexOf(value) !== -1) {
-      console.log(value);
-      setCurrentHome(homes.find((home) => home.name === value));
-    }
-  };
 
-  const checkTrueFlat = (value) => {
-    if (flats.map((el) => el.name).indexOf(value) !== -1) {
-      console.log(value);
-      setCurrentFlat(flats.find((flat) => flat.name === value));
-    }
-  };
 
   useEffect(() => {
-    if (currentHome) {
+    console.log(house, 'homed')
+    if (house) {
+      setFlats([])
+      dispatch(setFlat(undefined))
+      dispatch(clearUsers())
       axios({
         method: "get",
         url:
-          "https://dispex.org/api/vtest/Request/house_flats/" + currentHome.id,
+          "https://dispex.org/api/vtest/Request/house_flats/" + house.id,
       }).then(function (response) {
         setFlats(response.data);
         console.log(response.data);
       });
     }
-  }, [currentHome]);
+  }, [house, dispatch]);
+
+  useEffect(() => {
+    console.log(users)
+  }, [users])
 
   useEffect(() => {
     console.log(street);
     if (street) {
+      setHomes([])
+      setFlats([])
+      dispatch(setHouse(undefined))
+      dispatch(setFlat(undefined))
+      dispatch(clearUsers())
+      
       axios({
         method: "get",
         url: "https://dispex.org/api/vtest/Request/houses/" + street.id,
@@ -61,7 +89,7 @@ export const Houses = () => {
         console.log(response.data);
       });
     }
-  }, [street]);
+  }, [street, dispatch]);
 
   useEffect(() => {
     axios({
@@ -69,48 +97,29 @@ export const Houses = () => {
       url: "https://dispex.org/api/vtest/Request/streets",
     }).then(function (response) {
       console.log(response.data);
-      setStreets(response.data);
+      setStreets(response.data.filter(el => el.cityId === 1));
     });
   }, []);
+
+  useEffect(() => {
+    if (flat) {
+      console.log(house, flat, street, 'newState')
+      dispatch(fetchUsers('https://dispex.org/api/vtest/HousingStock/', flat.id))
+    }
+  }, [flat, dispatch])
+
   return (
     <div className={style.page}>
+      {modals.deletePerson && <RemoveUser/>}
       <div className={style.chooseHome}>
-        <div>
-          <input
-            onChange={(event) => checkTrueStreet(event.target.value)}
-            list="streets"
-          ></input>
-          <datalist id="streets">
-            {streets.map((el) => (
-              <option value={el.name}></option>
-            ))}
-          </datalist>
-        </div>
-        {homes && (
-          <div>
-            <input
-              onChange={(event) => checkTrueHome(event.target.value)}
-              list="homes"
-            ></input>
-            <datalist id="homes">
-              {homes.map((el) => (
-                <option value={el.name}></option>
-              ))}
-            </datalist>
-          </div>
-        )}
-        {flats && (
-          <div>
-            <input
-              onChange={(event) => checkTrueFlat(event.target.value)}
-              list="flats"
-            ></input>
-            <datalist id="flats">
-              {flats.map((el) => (
-                <option value={el.name}></option>
-              ))}
-            </datalist>
-          </div>
+        <HouseInput array={streets} name={'streets'} change={checkTrueValue} />
+        <HouseInput array={homes} name={'homes'} change={checkTrueValue} />
+        <HouseInput array={flats} name={'flats'} change={checkTrueValue} />
+      </div>
+      <div style={users.length > 0 ? {} : {margin: 0, maxHeight: 0}} className={style.persons}>
+        <div className={style.connect}></div>
+        {users.map(el => 
+          <UserCard user={el}/>
         )}
       </div>
     </div>

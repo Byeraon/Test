@@ -1,0 +1,88 @@
+.inputPlace input {
+    background-color: rgb(1, 9, 18);
+    border-radius: 5px;
+    outline: none;
+    border-color: transparent;
+    padding: 8px;
+    color: rgba(255, 255, 255, 0.818);
+    transition: 400ms all;
+    width: calc(100% - 16px);
+}
+
+.inputPlace input::placeholder {
+    color: rgba(255, 255, 255, 0.618);
+}
+
+.inputPlace datalist option {
+    background-color: red;
+}
+
+.inputPlace {
+    position: relative;
+    margin: 0 5px;
+    transition: 400ms all;
+    width: 300px;
+}
+
+.listOptions {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    transition: 1s all;
+    display: flex;
+    max-height: 0px;
+    height: max-content;
+    overflow: scroll;
+    overflow-x: hidden;
+    flex-direction: column;
+}
+
+.inputPlace input:focus ~ .listOptions {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    transition: 1s all;
+    display: flex;
+    max-height: 280px;
+    height: max-content;
+    overflow: scroll;
+    overflow-x: hidden;
+    flex-direction: column;
+}
+
+.inputPlace input:focus ~ .listOptions button{
+    min-height: 40px;
+}
+
+
+.listOptions button:hover {
+    background-color: rgba(105, 115, 126, 0.729);
+    color: rgba(255, 255, 255, 0.818);
+}
+
+.listOptions button {
+    color: rgba(255, 255, 255, 0.618);
+    transition: 200ms all;
+    background-color: rgba(105, 115, 126, 0.429);
+    min-height: 40px;
+    border-color: transparent;
+    cursor: pointer;
+}
+
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+
+::-webkit-scrollbar-button {
+    display: none;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-color: rgba(35, 35, 40, 0.1);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(35, 35, 40, 0.44);
+  }
