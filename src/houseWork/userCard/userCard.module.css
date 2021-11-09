@@ -1,62 +1,67 @@
 .place {
-    width: 25%;
-    margin-bottom: 5%;
+  width: 25%;
+  margin-bottom: 5%;
 }
 
 .card {
-    margin-left: auto;
-    margin-right: auto;
-    width: 80%;
-    background-color: white;
-    border-radius: 3px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  min-height: 190px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  background-color: white;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .logo {
-    margin-top: 7px;
-    border: 2px solid black;
-    border-radius: 50%;
-    background-image: url(../../images/user.png);
-    width: 40px;
-    height: 40px;
-    background-size: contain;
-    background-position: center center;
-    background-repeat: no-repeat;
+  margin: 7px 0;
+  margin-top: 14px;
+  border: 2px solid black;
+  border-radius: 50%;
+  background-image: url(../../images/user.png);
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
 .card p {
-    margin: 7px;
+  font-size: 17px;
+  font-family: monospace;
+  text-align: center;
+  margin: 4px;
 }
 
 .trash {
-    cursor: pointer;
-    position: absolute;
-    right: 0px;
-    top:  4px;
-    
-    width: 25px;
-    background-color: white;
-    height: 25px;
-    background-image: url(../../images/trashpng.png);
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+  cursor: pointer;
+  position: absolute;
+  right: 0px;
+  top: 4px;
+
+  width: 25px;
+  background-color: white;
+  height: 25px;
+  background-image: url(../../images/trashpng.png);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
 .edit {
-    cursor: pointer;
-    position: absolute;
-    left: 4px;
-    top:  4px;
-    
-    width: 25px;
-    background-color: white;
-    height: 25px;
-    background-image: url(../../images/pen.png);
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+  cursor: pointer;
+  position: absolute;
+  left: 4px;
+  top: 4px;
+
+  width: 25px;
+  background-color: white;
+  height: 25px;
+  background-image: url(../../images/pen.png);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }

@@ -1,92 +1,82 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState } from "react";
 import style from "./houses.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { HouseInput } from "./houseInput/HouseInput";
-import { clearUsers, fetchUsers, setFlat, setHouse, setStreet } from "../redux/actions";
+import {
+  clearUsers,
+  fetchUsers,
+  setFlat,
+  setHouse,
+  setStreet,
+  showModal,
+} from "../redux/actions";
 import { UserCard } from "./userCard/UserCard";
 import { RemoveUser } from "./modals/RemoveUser";
+import { UpdateUser } from "./modals/UpdateUser";
+import { AddPerson } from "./modals/AddPerson";
+import { BindUser } from "./modals/BindUser";
 
 export const Houses = () => {
   const dispatch = useDispatch();
   const { street, house, flat } = useSelector((state) => state.housesReducer);
   const { users, modals } = useSelector((state) => state.usersReducer);
   const [streets, setStreets] = useState([]);
-  const [flats, setFlats] = useState([])
-  const [homes, setHomes] = useState([])
-
+  const [flats, setFlats] = useState([]);
+  const [homes, setHomes] = useState([]);
 
   const checkTrueValue = (value, array, type) => {
     switch (type) {
-      case 'streets': {
+      case "streets": {
         if (array.map((el) => el.name).indexOf(value) !== -1) {
-          console.log(street);
-          console.log(array.find((street) => street.name === value));
           dispatch(setStreet(array.find((street) => street.name === value)));
-          console.log(street);
         }
         break;
       }
-      case 'homes': {
+      case "homes": {
         if (array.map((el) => el.name).indexOf(value) !== -1) {
-          console.log(array.find((home) => home.name === value), 'truehome');
-          dispatch(setHouse(array.find((home) => home.name === value)))
-          console.log(house)
+          dispatch(setHouse(array.find((home) => home.name === value)));
         }
         break;
       }
-      case 'flats': {
+      case "flats": {
         if (array.map((el) => el.name).indexOf(value) !== -1) {
-          console.log(value);
-
-          dispatch(setFlat(array.find((flat) => flat.name === value)))
-
+          dispatch(setFlat(array.find((flat) => flat.name === value)));
         }
         break;
       }
-      default: return 0
+      default:
+        return 0;
     }
-
   };
 
-
-
   useEffect(() => {
-    console.log(house, 'homed')
     if (house) {
-      setFlats([])
-      dispatch(setFlat(undefined))
-      dispatch(clearUsers())
+      setFlats([]);
+      dispatch(setFlat(undefined));
+      dispatch(clearUsers());
       axios({
         method: "get",
-        url:
-          "https://dispex.org/api/vtest/Request/house_flats/" + house.id,
+        url: "https://dispex.org/api/vtest/Request/house_flats/" + house.id,
       }).then(function (response) {
         setFlats(response.data);
-        console.log(response.data);
       });
     }
   }, [house, dispatch]);
 
   useEffect(() => {
-    console.log(users)
-  }, [users])
-
-  useEffect(() => {
-    console.log(street);
     if (street) {
-      setHomes([])
-      setFlats([])
-      dispatch(setHouse(undefined))
-      dispatch(setFlat(undefined))
-      dispatch(clearUsers())
-      
+      setHomes([]);
+      setFlats([]);
+      dispatch(setHouse(undefined));
+      dispatch(setFlat(undefined));
+      dispatch(clearUsers());
+
       axios({
         method: "get",
         url: "https://dispex.org/api/vtest/Request/houses/" + street.id,
       }).then(function (response) {
         setHomes(response.data);
-        console.log(response.data);
       });
     }
   }, [street, dispatch]);
@@ -96,31 +86,63 @@ export const Houses = () => {
       method: "get",
       url: "https://dispex.org/api/vtest/Request/streets",
     }).then(function (response) {
-      console.log(response.data);
-      setStreets(response.data.filter(el => el.cityId === 1));
+      setStreets(response.data.filter((el) => el.cityId === 1));
     });
   }, []);
 
   useEffect(() => {
     if (flat) {
-      console.log(house, flat, street, 'newState')
-      dispatch(fetchUsers('https://dispex.org/api/vtest/HousingStock/', flat.id))
+      dispatch(
+        fetchUsers("https://dispex.org/api/vtest/HousingStock/", flat.id)
+      );
     }
-  }, [flat, dispatch])
+  }, [flat, dispatch]);
 
   return (
     <div className={style.page}>
-      {modals.deletePerson && <RemoveUser/>}
-      <div className={style.chooseHome}>
-        <HouseInput array={streets} name={'streets'} change={checkTrueValue} />
-        <HouseInput array={homes} name={'homes'} change={checkTrueValue} />
-        <HouseInput array={flats} name={'flats'} change={checkTrueValue} />
-      </div>
-      <div style={users.length > 0 ? {} : {margin: 0, maxHeight: 0}} className={style.persons}>
-        <div className={style.connect}></div>
-        {users.map(el => 
-          <UserCard user={el}/>
+      <div className={style.dispex}></div>
+      <div className={style.fixContent}>
+        {flat && house && street && (
+          <button
+            onClick={() => {
+              dispatch(showModal("bindPerson"));
+            }}
+            className={style.connectUser}
+          ></button>
         )}
+        <button
+          onClick={() => {
+            dispatch(showModal("addPerson"));
+          }}
+          className={style.addUser}
+        ></button>
+        {modals.bindPerson && <BindUser />}
+        {modals.addPerson && <AddPerson />}
+        {modals.deletePerson && <RemoveUser />}
+        {modals.changePerson && <UpdateUser />}
+        <div className={style.chooseHome}>
+          <HouseInput
+            array={streets}
+            name={"streets"}
+            change={checkTrueValue}
+          />
+          <HouseInput array={homes} name={"homes"} change={checkTrueValue} />
+          <HouseInput array={flats} name={"flats"} change={checkTrueValue} />
+        </div>
+        {flat && house && street && (
+          <p
+            className={style.adress}
+          >{`г.${street.city}, ${street.prefix.shortName}.${street.name}, ${house.name}, ${flat.typeName} ${flat.name}`}</p>
+        )}
+        <div
+          style={users.length > 0 ? {} : { margin: 0, maxHeight: 0 }}
+          className={style.persons}
+        >
+          <div className={style.connect}></div>
+          {users.map((el) => (
+            <UserCard key={el.id} user={el} />
+          ))}
+        </div>
       </div>
     </div>
   );
